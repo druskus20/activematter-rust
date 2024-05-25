@@ -1,0 +1,12 @@
+[package]
+name = "activematter-rust"
+version = "0.1.0"
+edition = "2021"
+authors = ["Pedro Burgos", "Philip Mocz"]
+LICENSE = "GPL-3.0"
+
+
+[dependencies]
+rand = "0.8.5"
+ndarray = "0.15"
+
