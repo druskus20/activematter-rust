@@ -1,4 +1,5 @@
 extern crate ndarray;
+use activematter_rust::params::*;
 extern crate rand;
 
 use ndarray::prelude::*;
