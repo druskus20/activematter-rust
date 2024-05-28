@@ -8,10 +8,40 @@ license = "GPL-3.0"
 [dependencies]
 rand = "0.8.5"
 rayon = "1.10"
-ndarray = {version = "0.15.4", features = ["rayon"]}
+mpi = "0.8.0"
+ndarray = {version = "0.15.4"}
+
+[features]
+ndarray_blas = ["ndarray/blas"]
+ndarray_rayon = ["ndarray/rayon"]
+ndarray_rayon_blas = ["ndarray/blas", "ndarray/rayon"]
+
+[[bin]]
+name = "ndarray"
+path = "src/bin/ndarray.rs"
+
+[[bin]]
+name = "ndarray_blas"
+path = "src/bin/ndarray.rs"
+required-features = ["ndarray_blas"]
+
+[[bin]]
+name = "rayon_ndarray"
+path = "src/bin/rayon_ndarray.rs"
+required-features = ["ndarray_rayon"]
+
+[[bin]]
+name = "rayon_ndarray_blas"
+path = "src/bin/rayon_ndarray.rs"
+required-features = ["ndarray_rayon_blas"]
+
 
 [profile.release]
 lto = true
 codegen-units = 1
 panic = "abort"
+
+[target.x86_64-unknown-linux-gnu]
+linker = "/usr/bin/clang"
+rustflags = ["-Clink-arg=-fuse-ld=lld", "-Clink-arg=-Wl,--no-rosegment"]
 
