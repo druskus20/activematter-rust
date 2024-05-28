@@ -1,7 +1,11 @@
+use activematter_rust::params::*;
+use activematter_rust::utils;
 use ndarray::prelude::*;
 use ndarray::Array1;
 use ndarray::Zip;
+use rand::rngs::StdRng;
 use rand::Rng;
+use rand::SeedableRng;
 use rayon::prelude::*;
 use std::f64::consts::PI;
 
@@ -14,7 +18,8 @@ const NT: usize = 200; // number of time steps
 const N: usize = 500; // number of birds
 
 fn main() {
-    let mut rng = rand::thread_rng();
+    let mut rng: StdRng = utils::seed_rng(SEED);
+    let t_start = utils::get_instant();
 
     // Initialize bird positions
     let mut x = Array1::<f64>::from_shape_fn(N, |_| rng.gen::<f64>() * L);
@@ -26,7 +31,7 @@ fn main() {
     let mut vy = theta.mapv(|t| V0 * t.sin());
 
     // Simulation Main Loop
-    for _ in 0..NT {
+    for t in 0..NT {
         // Move
         x += &(vx * DT);
         y += &(vy * DT);
@@ -66,7 +71,18 @@ fn main() {
         // Update velocities
         vx = theta.mapv(|t| V0 * t.cos());
         vy = theta.mapv(|t| V0 * t.sin());
+
+        if PRINT {
+            let x = x.as_slice().unwrap();
+            let y = y.as_slice().unwrap();
+            let vx = vx.as_slice().unwrap();
+            let vy = vy.as_slice().unwrap();
+            utils::print_flock_positions(t, &x, &y, &vx, &vy);
+        }
     }
 
-    println!("Simulation complete.");
+    let t_end = utils::get_instant();
+    let duration = t_end - t_start;
+    let duration = duration.as_secs() as f64 * 1e9 + duration.subsec_nanos() as f64;
+    utils::print_time(utils::time_to_unit(duration, "ns", TIME_UNIT), TIME_UNIT);
 }

@@ -1,3 +1,6 @@
+pub const SEED: u8 = 1;
+pub const PRINT: bool = true;
+pub const TIME_UNIT: &str = "s";
 pub const V0: f64 = 1.0; // velocity
 pub const ETA: f64 = 0.5; // random fluctuation in angle (in radians)
 pub const L: f64 = 100.0; // size of box

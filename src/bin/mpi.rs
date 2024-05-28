@@ -1,4 +1,5 @@
 use activematter_rust::params::*;
+use activematter_rust::utils;
 use mpi::environment::*;
 use mpi::topology::*;
 use mpi::traits::*;
@@ -6,13 +7,14 @@ use rand::Rng;
 use std::f64::consts::PI;
 
 fn main() {
+    let mut rng = utils::seed_rng(SEED);
+    let t_start = utils::get_instant();
+
     // Initialize MPI
     let universe = mpi::initialize().unwrap();
     let world = universe.world();
     let rank = world.rank();
     let size = world.size();
-
-    let mut rng = rand::thread_rng();
 
     // Initialize bird positions
     let mut x: Vec<f64> = (0..N).map(|_| rng.gen::<f64>() * L).collect();
@@ -33,7 +35,7 @@ fn main() {
     };
 
     // Main loop
-    for _ in 0..NT {
+    for t in 0..NT {
         // Move
         for i in start..end {
             x[i] += vx[i] * DT;
@@ -81,10 +83,17 @@ fn main() {
         let mut gathered_theta = vec![0.0; N];
         world.all_gather_into(&theta[start..end], &mut gathered_theta[..]);
         theta.copy_from_slice(&gathered_theta);
+
+        if PRINT {
+            utils::print_flock_positions(t, &x, &y, &vx, &vy);
+        }
     }
 
     if rank == 0 {
-        println!("Simulation complete.");
+        let t_end = utils::get_instant();
+        let duration = t_end - t_start;
+        let duration = duration.as_secs() as f64 * 1e9 + duration.subsec_nanos() as f64;
+        utils::print_time(utils::time_to_unit(duration, "ns", TIME_UNIT), TIME_UNIT);
     }
 
     // Finalize MPI (automatically called at the end of the scope)
