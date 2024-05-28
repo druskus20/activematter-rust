@@ -3,9 +3,7 @@ use activematter_rust::params::*;
 use activematter_rust::utils;
 extern crate rand;
 
-use ndarray::prelude::*;
 use ndarray::Array1;
-use rand::rngs::StdRng;
 use rand::Rng;
 use std::f64::consts::PI;
 

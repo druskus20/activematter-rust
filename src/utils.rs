@@ -1,9 +1,6 @@
-use std::time::{Duration, Instant};
+use std::time::Instant;
 
-use rand::{
-    rngs::{StdRng, ThreadRng},
-    SeedableRng,
-};
+use rand::{rngs::StdRng, SeedableRng};
 
 pub fn seed_rng(seed: u8) -> StdRng {
     let seed: [u8; 32] = [seed; 32];

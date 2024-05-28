@@ -3,7 +3,6 @@ use activematter_rust::params::*;
 use activematter_rust::utils;
 use rand::rngs::StdRng;
 use rand::Rng;
-use rand::SeedableRng;
 use std::f64::consts::PI;
 
 fn main() {

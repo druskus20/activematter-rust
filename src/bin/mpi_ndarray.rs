@@ -1,6 +1,5 @@
 use activematter_rust::params::*;
 use activematter_rust::utils;
-use mpi::environment::*;
 use mpi::topology::*;
 use mpi::traits::*;
 use ndarray::prelude::*;
@@ -46,8 +45,8 @@ fn main() {
         }
 
         // Gather all positions
-        let mut all_x = Array1::<f64>::zeros(N);
-        let mut all_y = Array1::<f64>::zeros(N);
+        let all_x = Array1::<f64>::zeros(N);
+        let all_y = Array1::<f64>::zeros(N);
         world.all_gather_into(&x.slice(s![start..end]).to_vec()[..], &mut all_x.to_vec());
         world.all_gather_into(&y.slice(s![start..end]).to_vec()[..], &mut all_y.to_vec());
 
@@ -75,7 +74,7 @@ fn main() {
         vy = &theta.mapv(f64::sin) * V0;
 
         // Synchronize thetas across processes
-        let mut gathered_theta = Array1::<f64>::zeros(N);
+        let gathered_theta = Array1::<f64>::zeros(N);
         world.all_gather_into(
             &theta.slice(s![start..end]).to_vec()[..],
             &mut gathered_theta.to_vec(),

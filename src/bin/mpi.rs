@@ -1,6 +1,5 @@
 use activematter_rust::params::*;
 use activematter_rust::utils;
-use mpi::environment::*;
 use mpi::topology::*;
 use mpi::traits::*;
 use rand::Rng;
