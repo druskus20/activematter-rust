@@ -61,7 +61,7 @@ fn main() {
             });
 
         // Add random perturbations
-        //theta = mean_theta + ETA * (&Array1::<f64>::from_shape_fn(N, |_| rng.gen::<f64>()) - 0.5);
+        theta = mean_theta + ETA * (&Array1::<f64>::from_shape_fn(N, |_| rng.gen::<f64>()) - 0.5);
 
         // Update velocities
         vx = theta.mapv(|t| V0 * t.cos());

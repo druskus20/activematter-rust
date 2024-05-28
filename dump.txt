@@ -1,0 +1,35 @@
+ ✕ drusk tincan target/release  master !2 ?6
+╰ ﴨ time ./basic
+ñSimulation complete.
+./basic  17.38s user 0.00s system 99% cpu 17.386 total
+╭ ✓ drusk tincan target/release  master !2 ?6
+╰ ﴨ time mpirun -np 4 ./mpi
+Simulation complete.
+mpirun -np 4 ./mpi  23.82s user 0.17s system 377% cpu 6.356 total
+╭ ✓ drusk tincan target/release  master !2 ?6
+╰ ﴨ time mpirun -np 4 ./mpi_ndarray
+Simulation complete.
+mpirun -np 4 ./mpi_ndarray  246.05s user 0.25s system 397% cpu 1:01.92 total
+╭ ✓ drusk tincan target/release  master !2 ?6
+╰ ﴨ time ./rayon
+Simulation complete.
+./rayon  0.31s user 0.05s system 1144% cpu 0.031 total
+╭ ✓ drusk tincan target/release  master !2 ?6
+╰ ﴨ time ./ndarray
+Simulation complete.
+./ndarray  0.17s user 0.00s system 99% cpu 0.168 total
+╭ ✓ drusk tincan target/release  master !2 ?6
+╰ ﴨ time ./ndarray_blas
+Simulation complete.
+./ndarray_blas  0.17s user 0.00s system 99% cpu 0.175 total
+╭ ✓ drusk tincan target/release  master !2 ?6
+╰ ﴨ time ./rayon_ndarray
+Simulation complete.
+./rayon_ndarray  0.49s user 0.06s system 1315% cpu 0.042 total
+╭ ✓ drusk tincan target/release  master !2 ?6
+╰ ﴨ time ./rayon_ndarray_blas
+Simulation complete.
+./rayon_ndarray_blas  0.51s user 0.07s system 1180% cpu 0.049 total
+
+
+TODO: test higher parameters for the fastest ones
