@@ -2,6 +2,16 @@ use std::time::Instant;
 
 use rand::{rngs::StdRng, SeedableRng};
 
+use crate::params;
+
+pub fn parse_n() -> usize {
+    let args: Vec<String> = std::env::args().collect();
+    match args.get(1) {
+        Some(arg) => arg.parse().unwrap_or_else(|_| params::N_DEFAULT),
+        None => params::N_DEFAULT,
+    }
+}
+
 pub fn seed_rng(seed: u8) -> StdRng {
     let seed: [u8; 32] = [seed; 32];
     let rng = SeedableRng::from_seed(seed);

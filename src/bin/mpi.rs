@@ -6,6 +6,7 @@ use rand::Rng;
 use std::f64::consts::PI;
 
 fn main() {
+    let n = utils::parse_n();
     let mut rng = utils::seed_rng(SEED);
     let t_start = utils::get_instant();
 
@@ -16,19 +17,19 @@ fn main() {
     let size = world.size();
 
     // Initialize bird positions
-    let mut x: Vec<f64> = (0..N).map(|_| rng.gen::<f64>() * L).collect();
-    let mut y: Vec<f64> = (0..N).map(|_| rng.gen::<f64>() * L).collect();
+    let mut x: Vec<f64> = (0..n).map(|_| rng.gen::<f64>() * L).collect();
+    let mut y: Vec<f64> = (0..n).map(|_| rng.gen::<f64>() * L).collect();
 
     // Initialize bird velocities
-    let mut theta: Vec<f64> = (0..N).map(|_| 2.0 * PI * rng.gen::<f64>()).collect();
+    let mut theta: Vec<f64> = (0..n).map(|_| 2.0 * PI * rng.gen::<f64>()).collect();
     let mut vx: Vec<f64> = theta.iter().map(|&t| V0 * t.cos()).collect();
     let mut vy: Vec<f64> = theta.iter().map(|&t| V0 * t.sin()).collect();
 
     // MPI stuff
-    let n_per_process = N / size as usize;
+    let n_per_process = n / size as usize;
     let start = rank as usize * n_per_process;
     let end = if rank == size - 1 {
-        N
+        n
     } else {
         (rank as usize + 1) * n_per_process
     };
@@ -46,8 +47,8 @@ fn main() {
         }
 
         // Gather positions
-        let mut all_x = vec![0.0; N];
-        let mut all_y = vec![0.0; N];
+        let mut all_x = vec![0.0; n];
+        let mut all_y = vec![0.0; n];
         world.all_gather_into(&x[start..end], &mut all_x[..]);
         world.all_gather_into(&y[start..end], &mut all_y[..]);
 
@@ -56,7 +57,7 @@ fn main() {
         for b in start..end {
             let mut sx = 0.0;
             let mut sy = 0.0;
-            for i in 0..N {
+            for i in 0..n {
                 let a: f64 = all_x[i] - all_x[b];
                 let b: f64 = all_y[i] - all_y[b];
                 if (a.powi(2) + b.powi(2)) < R.powi(2) {
@@ -79,7 +80,7 @@ fn main() {
         }
 
         // Gather thetas across processes
-        let mut gathered_theta = vec![0.0; N];
+        let mut gathered_theta = vec![0.0; n];
         world.all_gather_into(&theta[start..end], &mut gathered_theta[..]);
         theta.copy_from_slice(&gathered_theta);
 

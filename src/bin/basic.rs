@@ -6,22 +6,23 @@ use rand::Rng;
 use std::f64::consts::PI;
 
 fn main() {
+    let n = utils::parse_n();
     let mut rng: StdRng = utils::seed_rng(SEED);
     let t_start = utils::get_instant();
 
     // Initialize bird positions
-    let mut x: Vec<f64> = (0..N).map(|_| rng.gen::<f64>() * L).collect();
-    let mut y: Vec<f64> = (0..N).map(|_| rng.gen::<f64>() * L).collect();
+    let mut x: Vec<f64> = (0..n).map(|_| rng.gen::<f64>() * L).collect();
+    let mut y: Vec<f64> = (0..n).map(|_| rng.gen::<f64>() * L).collect();
 
     // Initialize bird velocities
-    let mut theta: Vec<f64> = (0..N).map(|_| 2.0 * PI * rng.gen::<f64>()).collect();
+    let mut theta: Vec<f64> = (0..n).map(|_| 2.0 * PI * rng.gen::<f64>()).collect();
     let mut vx: Vec<f64> = theta.iter().map(|&t| V0 * t.cos()).collect();
     let mut vy: Vec<f64> = theta.iter().map(|&t| V0 * t.sin()).collect();
 
     // Simulation Main Loop
     for t in 0..NT {
         // Move
-        for i in 0..N {
+        for i in 0..n {
             x[i] += vx[i] * DT;
             y[i] += vy[i] * DT;
 
@@ -31,11 +32,11 @@ fn main() {
         }
 
         // Find mean angle of neighbors within R
-        let mut mean_theta = vec![0.0; N];
-        for b in 0..N {
+        let mut mean_theta = vec![0.0; n];
+        for b in 0..n {
             let mut sx = 0.0;
             let mut sy = 0.0;
-            for i in 0..N {
+            for i in 0..n {
                 if ((x[i] - x[b]).powi(2) + (y[i] - y[b]).powi(2)) < R.powi(2) {
                     sx += theta[i].cos();
                     sy += theta[i].sin();
@@ -45,12 +46,12 @@ fn main() {
         }
 
         // Add random perturbations
-        for b in 0..N {
+        for b in 0..n {
             theta[b] = mean_theta[b] + ETA * (rng.gen::<f64>() - 0.5);
         }
 
         // Update velocities
-        for b in 0..N {
+        for b in 0..n {
             vx[b] = V0 * theta[b].cos();
             vy[b] = V0 * theta[b].sin();
         }

@@ -9,24 +9,17 @@ use rand::SeedableRng;
 use rayon::prelude::*;
 use std::f64::consts::PI;
 
-const V0: f64 = 1.0; // velocity
-const ETA: f64 = 0.5; // random fluctuation in angle (in radians)
-const L: f64 = 10.0; // size of box
-const R: f64 = 1.0; // interaction radius
-const DT: f64 = 0.2; // time step
-const NT: usize = 200; // number of time steps
-const N: usize = 500; // number of birds
-
 fn main() {
+    let n = utils::parse_n();
     let mut rng: StdRng = utils::seed_rng(SEED);
     let t_start = utils::get_instant();
 
     // Initialize bird positions
-    let mut x = Array1::<f64>::from_shape_fn(N, |_| rng.gen::<f64>() * L);
-    let mut y = Array1::<f64>::from_shape_fn(N, |_| rng.gen::<f64>() * L);
+    let mut x = Array1::<f64>::from_shape_fn(n, |_| rng.gen::<f64>() * L);
+    let mut y = Array1::<f64>::from_shape_fn(n, |_| rng.gen::<f64>() * L);
 
     // Initialize bird velocities
-    let mut theta = Array1::<f64>::from_shape_fn(N, |_| 2.0 * PI * rng.gen::<f64>());
+    let mut theta = Array1::<f64>::from_shape_fn(n, |_| 2.0 * PI * rng.gen::<f64>());
     let mut vx = theta.mapv(|t| V0 * t.cos());
     let mut vy = theta.mapv(|t| V0 * t.sin());
 
@@ -41,7 +34,7 @@ fn main() {
         y.mapv_inplace(|yi| yi % L);
 
         // Find mean angle of neighbors within R
-        let mut mean_theta = Array1::<f64>::zeros(N);
+        let mut mean_theta = Array1::<f64>::zeros(n);
         Zip::from(&mut mean_theta)
             .and(&x)
             .and(&y)
@@ -66,7 +59,7 @@ fn main() {
             });
 
         // Add random perturbations
-        theta = mean_theta + ETA * (&Array1::<f64>::from_shape_fn(N, |_| rng.gen::<f64>()) - 0.5);
+        theta = mean_theta + ETA * (&Array1::<f64>::from_shape_fn(n, |_| rng.gen::<f64>()) - 0.5);
 
         // Update velocities
         vx = theta.mapv(|t| V0 * t.cos());
