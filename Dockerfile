@@ -33,9 +33,22 @@ COPY . .
 
 RUN export RUSTFLAGS="-C target-cpu=znver2 -C target-feature=+sse4.2,+avx2,+fma,+bmi2,+pclmul,+aes"
 
-RUN cargo build --release --all 
+RUN mkdir -p /build2
+RUN cargo clean
+RUN cargo build --release --bin    rayon_ndarray --features "ndarray_rayon"
+RUN mv target/release/rayon_ndarray /build2/rust_rayon_ndarray
+
+RUN cargo build --release --bin    basic
+RUN cargo build --release --bin    mpi
+RUN cargo build --release --bin    mpi_ndarray
+RUN cargo build --release --bin    ndarray
+RUN cargo build --release --bin    rayon
+
+#RUN cargo build --release --bin    ndarray_blas
+#RUN cargo build --release --bin    rayon_ndarray_blas
+
  
- RUN mkdir -p /build && \
+ RUN mkdir -p /build2 && \
     executables=$(find target/release -maxdepth 1 -type f -executable) && \
-    for exe in $executables; do mv "$exe" "/build/rust_$(basename "$exe")"; done
+    for exe in $executables; do mv "$exe" "/build2/rust_$(basename "$exe")"; done
 

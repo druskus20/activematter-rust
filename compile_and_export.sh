@@ -1,4 +1,4 @@
-docker build -t build-image .
-docker run --name build-container build-image
-docker cp build-container:/build ./build
-docker rm build-container
+docker build -t build-image2 .
+docker run --name build-container2 build-image2
+docker cp build-container2:/build2 ./build2
+docker rm build-container2

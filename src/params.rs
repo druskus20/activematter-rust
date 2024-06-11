@@ -1,5 +1,5 @@
 pub const SEED: u8 = 1;
-pub const PRINT: bool = true;
+pub const PRINT: bool = false;
 pub const TIME_UNIT: &str = "s";
 pub const V0: f64 = 1.0; // velocity
 pub const ETA: f64 = 0.5; // random fluctuation in angle (in radians)
