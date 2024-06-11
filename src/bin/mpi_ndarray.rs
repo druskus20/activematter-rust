@@ -8,8 +8,11 @@ use rand::Rng;
 use std::f64::consts::PI;
 
 fn main() {
+    // Parse the number of birds from command-line arguments
     let n = utils::parse_n();
+    // Seed the random number generator
     let mut rng: StdRng = utils::seed_rng(SEED);
+    // Record the start time of the simulation
     let t_start = utils::get_instant();
 
     // Initialize MPI
@@ -18,7 +21,6 @@ fn main() {
     let rank = world.rank();
     let size = world.size();
 
-    // Initialize bird positions
     // Initialize bird positions
     let mut x = Array1::<f64>::from_shape_fn(n, |_| rng.gen::<f64>() * L);
     let mut y = Array1::<f64>::from_shape_fn(n, |_| rng.gen::<f64>() * L);
@@ -39,7 +41,7 @@ fn main() {
 
     // Simulation Main Loop
     for t in 0..NT {
-        // Move
+        // Move birds
         for i in start..end {
             x[i] = (x[i] + vx[i] * DT) % L;
             y[i] = (y[i] + vy[i] * DT) % L;
@@ -65,12 +67,12 @@ fn main() {
             mean_theta[b - start] = sy.atan2(sx);
         }
 
-        // Add random perturbations
+        // Add random perturbations to the directions
         for b in start..end {
             theta[b] = mean_theta[b - start] + ETA * (rng.gen::<f64>() - 0.5);
         }
 
-        // Update velocities
+        // Update velocities based on the new directions
         vx = &theta.mapv(f64::cos) * V0;
         vy = &theta.mapv(f64::sin) * V0;
 
@@ -82,6 +84,7 @@ fn main() {
         );
         theta.assign(&Array::from_vec(gathered_theta.to_vec()));
 
+        // Print the positions of birds if required
         if PRINT {
             let x = x.as_slice().unwrap();
             let y = y.as_slice().unwrap();
@@ -91,6 +94,7 @@ fn main() {
         }
     }
 
+    // Only the master process prints the simulation time
     if rank == 0 {
         let t_end = utils::get_instant();
         let duration = t_end - t_start;

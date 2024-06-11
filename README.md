@@ -2,6 +2,33 @@
 
 A port of https://github.com/pmocz/activematter-python 
 
+## Building
+
+```sh
+cargo build --release --bin <name> 
+```
+
+### On Dardel: 
+
+```sh
+module load rust/1.78.0`
+module load cce gcc aocc PrgEnv-gnu PrgEnv-cray PrgEnv-aocc
+export CRAY_MPICH_DIR=/opt/cray/pe/mpich/8.1.28/ucx/cray/17.0/lib/pkgconfig
+cargo build --release --bin <name> 
+```
+
+### With docker
+
+```sh
+./compile_and_export.sh
+```
+
+## Running
+
+```sh
+./target/release/<name> <N_BIRDS>
+```
+
 
 ## Copyright notice
 
